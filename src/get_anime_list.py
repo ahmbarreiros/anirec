@@ -6,7 +6,7 @@ def get_anime_list(user_name):
         "X-MAL-CLIENT-ID": client_id
         }
     request_uri= f"https://api.myanimelist.net/v2/users/{user_name}/animelist"
-    query = "?sort=list_score&fields=id,title,start_date,mean,rank_popularity,genres,num_episodes,list_status&limit=1000&nsfw=false"
+    query = "?sort=list_score&fields=id,title,start_date,mean,rank,popularity,genres(name),num_episodes,list_status(status, score, num_episodes_watched)&limit=1000&nsfw=false"
     request = request_uri + query
     result = get(request, headers=headers)
     data = result.json()
