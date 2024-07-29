@@ -1,6 +1,8 @@
 from get_anime_list import get_anime_list
 
 import pandas as pd
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
 data = get_anime_list("toinMAL")
 
@@ -47,10 +49,13 @@ def format_genres_from_mal(genres):
     return new_genres
 
 formatted_data = format_mal_data(data)
-# print(formatted_data["Genres"])
 df = pd.DataFrame.from_dict(formatted_data)
-pd.get_dummies(df["Genres"])
-print(df)
+print(len(df))
+genres_dummies = pd.get_dummies(df["Genres"].apply(pd.Series).stack()).sum()
+print(genres_dummies)
+print(len(genres_dummies))
+# df = pd.concat([df, genres_dummies], axis=1)
+# print(len(df))
 # print(df["Genres"])
 # print(df.info())
 # print(df.describe())
