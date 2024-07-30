@@ -1,63 +1,47 @@
 from get_anime_list import get_anime_list
+from format_mal_data import format_mal_data
 
 import pandas as pd
-from sklearn.decomposition import PCA
+import numpy as np
 import matplotlib.pyplot as plt
+import tensorflow as tf
+
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+
+from sklearn.model_selection import train_test_split
+
+from sklearn.preprocessing import StandardScaler
+
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
 
 data = get_anime_list("toinMAL")
 # data = get_anime_list("Alves_Gabriel")
-print(data)
-def format_mal_data(data):
-    formatted_data = dict()
-    formatted_data.setdefault("Title", [])
-    formatted_data.setdefault("Picture", [])
-    formatted_data.setdefault("Start_Date", [])
-    formatted_data.setdefault("Mean_Score", [])
-    formatted_data.setdefault("Rank", [])
-    formatted_data.setdefault("Popularity", [])
-    formatted_data.setdefault("genre_1", [])
-    formatted_data.setdefault("genre_2", [])
-    formatted_data.setdefault("genre_3", [])
-    formatted_data.setdefault("Num_of_Episodes", [])
-    formatted_data.setdefault("P_Status", [])
-    formatted_data.setdefault("P_Score", [])
-    formatted_data.setdefault("P_Episodes_Watched", [])
-    for element in data:
-        formatted_data["Title"].append(element["node"]["title"])
-        formatted_data["Picture"].append(element["node"]["main_picture"]["medium"])
-        try:
-            formatted_data["Start_Date"].append(element["node"]["start_date"])
-        except:
-            formatted_data["Start_Date"].append(None)
-        try:
-            formatted_data["Mean_Score"].append(element["node"]["mean"])
-        except:
-            formatted_data["Mean_Score"].append(None)
-        try:
-            formatted_data["Rank"].append(element["node"]["rank"])
-        except:
-            formatted_data["Rank"].append(None)
-        formatted_data["Popularity"].append(element["node"]["popularity"])
-        try:
-            formatted_data["genre_1"].append((element["node"]["genres"][0]["name"]))
-        except:
-            formatted_data["genre_1"].append(None)
-        try:
-            formatted_data["genre_2"].append((element["node"]["genres"][1]["name"]))
-        except:
-            formatted_data["genre_2"].append(None)
-        try:
-            formatted_data["genre_3"].append((element["node"]["genres"][2]["name"]))
-        except:
-            formatted_data["genre_3"].append(None)
-        formatted_data["Num_of_Episodes"].append(element["node"]["num_episodes"])
-        formatted_data["P_Status"].append(element["list_status"]["status"])
-        formatted_data["P_Score"].append(element["list_status"]["score"])
-        formatted_data["P_Episodes_Watched"].append(element["list_status"]["num_episodes_watched"])
-    return formatted_data
 
 formatted_data = format_mal_data(data)
+
 df = pd.DataFrame.from_dict(formatted_data)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.max_rows', None)
-print(df.head(1))
+
+X = df.drop(["Title", "Picture", "Start_Date", "P_Score", "genre_1", "genre_2", "genre_3"], axis=1).values
+y = df["P_Score"].values
+
+ct = ColumnTransformer(transformers=[('encoder', OneHotEncoder(), [-1])], remainder='passthrough')
+X = np.array(ct.fit_transform(X))
+y = y.reshape(len(y), 1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2)
+
+sc_x = StandardScaler()
+sc_y = StandardScaler()
+X_train = sc_x.fit_transform(X_train)
+X_test = sc_x.transform(X_test)
+y_train = sc_y.fit_transform(y_train)
+y_test = sc_y.transform(y_test)
+
+print(X_train)
+print(y_train)
+
+
+# all_genres = pd.Series(df[['genre_1', 'genre_2', 'genre_3']].values.ravel()).unique()
+# print(all_genres)
