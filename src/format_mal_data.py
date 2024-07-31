@@ -17,6 +17,7 @@ def format_mal_data(data):
     # formatted_data.setdefault("Genres_Id", [])
     # formatted_data.setdefault("Genres", [])
     formatted_data.setdefault("Num_of_Episodes", [])
+    formatted_data.setdefault("Media_Type", [])
     formatted_data.setdefault("P_Status", [])
     formatted_data.setdefault("P_Score", [])
     # formatted_data.setdefault("P_Completion", [])
@@ -42,25 +43,26 @@ def format_mal_data(data):
             formatted_data["genre_1_id"].append((element["node"]["genres"][0]["id"]))
             formatted_data["genre_1"].append((element["node"]["genres"][0]["name"]))
         except:
-            formatted_data["genre_1_id"].append(0)
-            formatted_data["genre_1"].append(None)
+            formatted_data["genre_1_id"].append(-1)
+            formatted_data["genre_1"].append("Unkown")
         try:
             formatted_data["genre_2_id"].append((element["node"]["genres"][1]["id"]))
             formatted_data["genre_2"].append((element["node"]["genres"][1]["name"]))
         except:
-            formatted_data["genre_2_id"].append(0)
-            formatted_data["genre_2"].append(None)
+            formatted_data["genre_2_id"].append(-1)
+            formatted_data["genre_2"].append("Unkown")
         try:
             formatted_data["genre_3_id"].append((element["node"]["genres"][2]["id"]))
             formatted_data["genre_3"].append((element["node"]["genres"][2]["name"]))
         except:
-            formatted_data["genre_3_id"].append(0)
-            formatted_data["genre_3"].append(None)
+            formatted_data["genre_3_id"].append(-1)
+            formatted_data["genre_3"].append("Unkown")
         # formatted_data["Genres_Id"].append(format_genres_id_from_mal(element["node"]["genres"]))
         # formatted_data["Genres"].append(format_genres_from_mal(element["node"]["genres"]))
         formatted_data["P_Status"].append(element["list_status"]["status"])
         formatted_data["P_Score"].append(element["list_status"]["score"])
         formatted_data["Num_of_Episodes"].append(element["node"]["num_episodes"])
+        formatted_data["Media_Type"].append(element["node"]["media_type"])
         # formatted_data["P_Episodes_Watched"].append(element["list_status"]["num_episodes_watched"])
     return formatted_data
 
